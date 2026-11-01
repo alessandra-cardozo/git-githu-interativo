@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git & GitHub Interactive Hub</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fontes do Google (Inter e Fira Code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome CDN para Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Marked.js para renderizar Markdown do README -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            git: {
+              orange: '#f14e32',
+              green: '#2ea44f',
+              blue: '#0969da',
+              dark: '#0d1117',
+              card: '#161b22',
+              border: '#30363d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+    
+    .terminal-shadow {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(241, 78, 50, 0.1);
+    }
+
+    .markdown-body h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem; border-bottom: 1px solid #30363d; padding-bottom: 0.3rem; }
+    .markdown-body h2 { font-size: 1.3rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #30363d; padding-bottom: 0.2rem; }
+    .markdown-body p { margin-bottom: 0.75rem; line-height: 1.6; color: #c9d1d9; }
+    .markdown-body ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 0.75rem; }
+    .markdown-body code { background: #21262d; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.875rem; color: #58a6ff; }
+    .markdown-body pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; margin-bottom: 0.75rem; }
+    .markdown-body a { color: #58a6ff; text-decoration: underline; }
+  </style>
+</head>
+<body class="bg-[#090d13] text-gray-100 font-sans min-h-screen flex flex-col selection:bg-git-orange selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-git-border bg-git-dark/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-git-orange to-red-600 flex items-center justify-center text-white shadow-lg shadow-git-orange/20">
+          <i class="fa-brands fa-git-alt text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Git & GitHub <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-git-orange/20 text-git-orange border border-git-orange/30">Interactive Hub</span>
+          </h1>
+          <p class="text-xs text-gray-400 hidden sm:block">Guia de Aprendizado Guiado & Simulador com Auto-Ajuda</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="btnResetAll" class="text-xs px-3 py-2 rounded-lg bg-git-border/60 hover:bg-git-border text-gray-300 hover:text-white transition flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Resetar Simulador</span>
+        </button>
+        <a href="https://github.com" target="_blank" rel="noopener" class="text-xs px-3 py-2 rounded-lg bg-git-blue/20 hover:bg-git-blue/30 text-blue-400 border border-git-blue/30 transition flex items-center gap-1.5">
+          <i class="fa-brands fa-github"></i>
+          <span class="hidden md:inline">Abrir GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+    <!-- Card Alerta de Instruções -->
+    <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-lg bg-blue-500/20 text-blue-400 flex-shrink-0">
+          <i class="fa-solid fa-lightbulb text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-sm font-semibold text-white">Como usar o simulador sem cometer erros:</h2>
+          <p class="text-xs text-gray-300">Clique em qualquer etapa da lista de <strong>Progresso do Estudo</strong> à direita para ver o comando exato e preencher o terminal automaticamente!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid Superior: Terminal + Workflow Checklist -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Coluna Esquerda: Terminal Git (7 cols no Desktop) -->
+      <section class="lg:col-span-7 xl:col-span-7 flex flex-col">
+        <div class="bg-git-card border border-git-border rounded-xl overflow-hidden terminal-shadow flex flex-col h-[500px]">
+          
+          <!-- Terminal Header (Estilo macOS) -->
+          <div class="bg-[#161b22] px-4 py-3 border-b border-git-border flex items-center justify-between select-none">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-red-500 inline-block hover:opacity-80 transition cursor-pointer" id="btnTerminalClose" title="Limpar"></span>
+              <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+              <span class="ml-3 text-xs font-mono text-gray-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-terminal text-git-orange"></i>
+                bash — simulador-git (branch: <span id="currentBranchBadge" class="text-git-orange font-semibold">main</span>)
+              </span>
+            </div>
+            <button id="btnClearTerminal" class="text-xs text-gray-400 hover:text-white bg-git-border/50 hover:bg-git-border px-2.5 py-1 rounded transition flex items-center gap-1">
+              <i class="fa-solid fa-broom"></i>
+              Limpar
+            </button>
+          </div>
+
+          <!-- Corpo do Terminal com Scroll -->
+          <div id="terminalBody" class="flex-1 p-4 font-mono text-sm overflow-y-auto space-y-3 bg-git-dark text-gray-200">
+            <div class="text-xs text-gray-500 border-b border-git-border/40 pb-2 mb-3">
+              Simulador Interativo v3.0 — Digite um comando ou clique em um item do Checklist.<br>
+              Dica rápida: Clique em <span class="text-green-400">git add .</span> depois em <span class="text-blue-400">git commit</span>.
+            </div>
+          </div>
+
+          <!-- Input do Terminal -->
+          <div class="p-3 bg-[#11151c] border-t border-git-border flex items-center gap-2">
+            <span class="text-git-orange font-mono font-bold text-sm">$</span>
+            <input 
+              type="text" 
+              id="terminalInput" 
+              placeholder="Digite um comando Git ou clique nos botões abaixo..." 
+              autocomplete="off"
+              spellcheck="false"
+              class="flex-1 bg-transparent border-none outline-none font-mono text-sm text-gray-100 placeholder-gray-600 focus:ring-0"
+            />
+            <button id="btnExecuteCommand" class="bg-git-green hover:bg-emerald-600 text-white font-medium text-xs px-4 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+              <span>Executar</span>
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botões de Atalhos de Clique Rápido -->
+        <div class="mt-3 bg-git-card border border-git-border rounded-lg p-3 flex flex-wrap items-center gap-2">
+          <span class="text-xs text-gray-400 font-medium mr-1 flex items-center gap-1">
+            <i class="fa-solid fa-bolt text-yellow-400"></i> Atalhos Rápidos:
+          </span>
+          <button onclick="runQuickCommand('git status')" class="text-xs bg-git-border/40 hover:bg-git-border text-gray-200 px-2.5 py-1.5 rounded-md font-mono transition">git status</button>
+          <button onclick="runQuickCommand('git add .')" class="text-xs bg-git-border/40 hover:bg-git-border text-green-400 px-2.5 py-1.5 rounded-md font-mono transition">git add .</button>
+          <button onclick="runQuickCommand('git commit -m &quot;docs: atualizado README&quot;')" class="text-xs bg-git-border/40 hover:bg-git-border text-blue-400 px-2.5 py-1.5 rounded-md font-mono transition">git commit</button>
+          <button onclick="runQuickCommand('git push')" class="text-xs bg-git-border/40 hover:bg-git-border text-purple-400 px-2.5 py-1.5 rounded-md font-mono transition">git push</button>
+          <button onclick="runQuickCommand('git pull')" class="text-xs bg-git-border/40 hover:bg-git-border text-yellow-400 px-2.5 py-1.5 rounded-md font-mono transition">git pull</button>
+          <button onclick="runQuickCommand('git log')" class="text-xs bg-git-border/40 hover:bg-git-border text-gray-400 px-2.5 py-1.5 rounded-md font-mono transition">git log</button>
+        </div>
+      </section>
+
+      <!-- Coluna Direita: Checklist de Estudos & Card Guiado (5 cols) -->
+      <section class="lg:col-span-5 xl:col-span-5 flex flex-col gap-5">
+        
+        <!-- Box Progresso do Estudo -->
+        <div class="bg-git-card border border-git-border rounded-xl p-5 shadow-lg flex flex-col">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-git-border">
+            <h2 class="text-base font-semibold text-white flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-git-green"></i>
+              Progresso do Estudo
+            </h2>
+            <span id="progressPercentage" class="text-xs font-mono font-bold bg-git-green/10 text-git-green border border-git-green/30 px-2.5 py-1 rounded-full">0% Concluído</span>
+          </div>
+
+          <!-- Barra de Progresso Visual -->
+          <div class="w-full bg-git-dark rounded-full h-2 mb-4 overflow-hidden border border-git-border/40">
+            <div id="progressBarFill" class="bg-gradient-to-r from-git-orange to-git-green h-full w-0 transition-all duration-500"></div>
+          </div>
+
+          <p class="text-xs text-gray-400 mb-3"><i class="fa-solid fa-hand-pointer text-git-blue mr-1"></i> Clique em qualquer opção para ver o comando exato:</p>
+
+          <!-- Lista do Checklist -->
+          <ul class="space-y-2.5" id="checklistContainer">
+            <!-- Itens preenchidos via JS -->
+          </ul>
+        </div>
+
+        <!-- Card Guiado: Mostra o comando exato selecionado -->
+        <div id="guidedCommandCard" class="bg-git-card border border-git-blue/50 rounded-xl p-4 shadow-lg flex flex-col space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs uppercase font-bold text-git-blue tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-info"></i> Comando Selecionado
+            </span>
+            <span id="guidedStepBadge" class="text-[10px] font-mono bg-blue-900/40 text-blue-300 px-2 py-0.5 rounded">Passo 1</span>
+          </div>
+
+          <h3 id="guidedTitle" class="text-sm font-semibold text-white">Criar e salvar alterações</h3>
+          <p id="guidedDesc" class="text-xs text-gray-300">Este comando envia todas as modificações realizadas nos arquivos para a área de preparação (Staging Area).</p>
+          
+          <!-- Box do Comando Formatado -->
+          <div class="bg-git-dark p-2.5 rounded-lg border border-git-border flex items-center justify-between font-mono text-xs">
+            <span id="guidedCommandCode" class="text-green-400 font-bold">git add .</span>
+            <button id="btnAutoFillTerminal" class="bg-git-blue hover:bg-blue-600 text-white text-[11px] font-sans px-2.5 py-1 rounded transition flex items-center gap-1">
+              <span>Usar no Terminal</span>
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- Seção Inferior: Gerador e Preview do README.md -->
+    <section class="bg-git-card border border-git-border rounded-xl shadow-xl overflow-hidden">
+      <div class="border-b border-git-border p-4 sm:px-6 bg-[#161b22]/90 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-file-code text-git-orange"></i>
+            Gerador & Visualizador de README.md
+          </h2>
+          <p class="text-xs text-gray-400">Edite as informações abaixo para gerar o ficheiro README.md do seu projeto.</p>
+        </div>
+
+        <button id="btnCopyReadme" class="bg-git-green hover:bg-emerald-600 text-white font-medium text-xs px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md">
+          <i class="fa-regular fa-copy"></i>
+          <span id="copyBtnText">Copiar Texto Markdown</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-git-border">
+        <!-- Form de Configuração -->
+        <div class="p-5 sm:p-6 space-y-4 bg-git-dark/50">
+          <h3 class="text-xs font-semibold text-gray-300 uppercase tracking-wider border-b border-git-border pb-2 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-git-blue"></i> Configurações do Projeto
+          </h3>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-1">Título do Projeto</label>
+            <input type="text" id="readmeTitle" value="Meu Caderno de Estudos Git & GitHub" class="w-full bg-git-dark border border-git-border rounded-lg px-3 py-2 text-sm text-white focus:border-git-blue outline-none transition" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-1">Descrição</label>
+            <textarea id="readmeDesc" rows="2" class="w-full bg-git-dark border border-git-border rounded-lg px-3 py-2 text-sm text-white focus:border-git-blue outline-none transition">Repositório criado para registrar comandos, resumos e anotações dos meus estudos diários em Git e GitHub.</textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-1">Seu Nome / Desenvolvedor</label>
+              <input type="text" id="readmeAuthor" value="Desenvolvedor(a) Web" class="w-full bg-git-dark border border-git-border rounded-lg px-3 py-2 text-sm text-white focus:border-git-blue outline-none transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-1">Usuário GitHub</label>
+              <input type="text" id="readmeGithubUser" value="seu-usuario" class="w-full bg-git-dark border border-git-border rounded-lg px-3 py-2 text-sm text-white focus:border-git-blue outline-none transition" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-2">Tecnologias (Badges)</label>
+            <div class="flex flex-wrap gap-2" id="techBadgesContainer"></div>
+          </div>
+        </div>
+
+        <!-- Preview em Tempo Real -->
+        <div class="p-5 sm:p-6 bg-[#0d1117] flex flex-col">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-git-border">
+            <span class="text-xs font-mono text-gray-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-eye text-git-green"></i>
+              Modelo de README.md (Live Preview)
+            </span>
+            <span class="text-[10px] uppercase font-bold text-gray-500 bg-git-border/40 px-2 py-0.5 rounded">Renderizado</span>
+          </div>
+
+          <div id="readmePreview" class="markdown-body flex-1 overflow-y-auto max-h-[440px] pr-2"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-git-border bg-git-dark py-6 mt-12 text-center text-xs text-gray-500">
+    <p>© Git & GitHub Interactive Hub — Construído para facilitar o aprendizado sem complicações.</p>
+  </footer>
+
+  <!-- Toast de Notificação -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-git-card border border-git-green text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-git-green text-lg" id="toastIcon"></i>
+    <span id="toastMsg" class="text-sm font-medium">Operação realizada com sucesso!</span>
+  </div>
+
+  <script>
+    // Estrutura de dados dos passos do Checklist
+    const stepsData = [
+      {
+        id: 'create_repo',
+        title: 'Criar repositório no GitHub',
+        cmd: 'git init',
+        desc: 'Inicializa um novo repositório Git local na pasta atual do projeto.',
+        completed: false
+      },
+      {
+        id: 'clone_repo',
+        title: 'Clonar o repositório',
+        cmd: 'git clone https://github.com/usuario/meu-repo.git',
+        desc: 'Baixa uma cópia completa de um repositório remoto do GitHub para o seu computador.',
+        completed: false
+      },
+      {
+        id: 'create_readme',
+        title: 'Criar um arquivo `README.md`',
+        cmd: 'echo "# Meu Projeto" > README.md',
+        desc: 'Cria o ficheiro de documentação principal onde fica a descrição do seu projeto.',
+        completed: false
+      },
+      {
+        id: 'add_changes',
+        title: 'Adicionar e salvar alterações (`git add .`)',
+        cmd: 'git add .',
+        desc: 'Envia todas as alterações dos arquivos para a Staging Area (área de preparação).',
+        completed: false
+      },
+      {
+        id: 'commit_changes',
+        title: 'Registrar commit com mensagem (`git commit`)',
+        cmd: 'git commit -m "docs: meu primeiro commit"',
+        desc: 'Grava permanentemente o histórico das alterações preparadas com uma mensagem explicativa.',
+        completed: false
+      },
+      {
+        id: 'push_changes',
+        title: 'Enviar dados para o GitHub (`git push`)',
+        cmd: 'git push',
+        desc: 'Publica e sincroniza os seus commits locais com o repositório remoto no GitHub.',
+        completed: false
+      }
+    ];
+
+    // Estado interno do repositório no simulador
+    const repoState = {
+      staged: false,
+      hasCommits: false,
+      pushed: false,
+      currentStepIndex: 3 // Inicia focado no git add .
+    };
+
+    const availableTechs = [
+      { id: 'git', name: 'Git', badge: 'https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white', selected: true },
+      { id: 'github', name: 'GitHub', badge: 'https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white', selected: true },
+      { id: 'javascript', name: 'JavaScript', badge: 'https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E', selected: true },
+      { id: 'html5', name: 'HTML5', badge: 'https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white', selected: true },
+      { id: 'css3', name: 'CSS3', badge: 'https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white', selected: true },
+      { id: 'react', name: 'React', badge: 'https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB', selected: false },
+    ];
+
+    // Elementos DOM
+    const terminalBody = document.getElementById('terminalBody');
+    const terminalInput = document.getElementById('terminalInput');
+    const btnExecuteCommand = document.getElementById('btnExecuteCommand');
+    const btnClearTerminal = document.getElementById('btnClearTerminal');
+    const btnTerminalClose = document.getElementById('btnTerminalClose');
+    const btnResetAll = document.getElementById('btnResetAll');
+
+    const checklistContainer = document.getElementById('checklistContainer');
+    const progressPercentage = document.getElementById('progressPercentage');
+    const progressBarFill = document.getElementById('progressBarFill');
+
+    const guidedTitle = document.getElementById('guidedTitle');
+    const guidedDesc = document.getElementById('guidedDesc');
+    const guidedCommandCode = document.getElementById('guidedCommandCode');
+    const guidedStepBadge = document.getElementById('guidedStepBadge');
+    const btnAutoFillTerminal = document.getElementById('btnAutoFillTerminal');
+
+    const readmeTitle = document.getElementById('readmeTitle');
+    const readmeDesc = document.getElementById('readmeDesc');
+    const readmeAuthor = document.getElementById('readmeAuthor');
+    const readmeGithubUser = document.getElementById('readmeGithubUser');
+    const readmePreview = document.getElementById('readmePreview');
+    const btnCopyReadme = document.getElementById('btnCopyReadme');
+    const techBadgesContainer = document.getElementById('techBadgesContainer');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderChecklist();
+      selectStep(3); // Seleciona git add . por padrão
+      renderBadgesSelector();
+      updateReadmePreview();
+
+      terminalInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleCommand();
+      });
+      btnExecuteCommand.addEventListener('click', handleCommand);
+      btnClearTerminal.addEventListener('click', clearTerminal);
+      btnTerminalClose.addEventListener('click', clearTerminal);
+      btnResetAll.addEventListener('click', resetAll);
+
+      btnAutoFillTerminal.addEventListener('click', () => {
+        const step = stepsData[repoState.currentStepIndex];
+        terminalInput.value = step.cmd;
+        terminalInput.focus();
+        showToast('Comando inserido no terminal!');
+      });
+
+      [readmeTitle, readmeDesc, readmeAuthor, readmeGithubUser].forEach(el => {
+        el.addEventListener('input', updateReadmePreview);
+      });
+
+      btnCopyReadme.addEventListener('click', copyReadme);
+    });
+
+    // Renderiza a Lista do Checklist
+    function renderChecklist() {
+      checklistContainer.innerHTML = '';
+      let completedCount = 0;
+
+      stepsData.forEach((step, idx) => {
+        if (step.completed) completedCount++;
+
+        const li = document.createElement('li');
+        li.className = `p-3 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
+          repoState.currentStepIndex === idx
+            ? 'bg-git-blue/15 border-git-blue'
+            : step.completed
+            ? 'bg-git-green/10 border-git-green/40'
+            : 'bg-git-dark/60 border-git-border/60 hover:border-gray-500'
+        }`;
+
+        li.onclick = () => selectStep(idx);
+
+        li.innerHTML = `
+          <div class="flex items-center gap-3">
+            <input type="checkbox" ${step.completed ? 'checked' : ''} onclick="event.stopPropagation(); toggleStep(${idx})" class="rounded bg-git-dark border-git-border text-git-green focus:ring-0 cursor-pointer w-4 h-4">
+            <span class="text-xs font-medium ${step.completed ? 'line-through text-gray-400' : 'text-gray-200'}">${step.title}</span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] ${repoState.currentStepIndex === idx ? 'text-git-blue' : 'text-gray-600'}"></i>
+        `;
+
+        checklistContainer.appendChild(li);
+      });
+
+      const pct = Math.round((completedCount / stepsData.length) * 100);
+      progressPercentage.textContent = `${pct}% Concluído`;
+      progressBarFill.style.width = `${pct}%`;
+    }
+
+    function toggleStep(idx) {
+      stepsData[idx].completed = !stepsData[idx].completed;
+      renderChecklist();
+    }
+
+    function selectStep(idx) {
+      repoState.currentStepIndex = idx;
+      const step = stepsData[idx];
+
+      guidedTitle.textContent = step.title.replace(/`([^`]+)`/g, '$1');
+      guidedDesc.textContent = step.desc;
+      guidedCommandCode.textContent = step.cmd;
+      guidedStepBadge.textContent = `Passo ${idx + 1} de ${stepsData.length}`;
+
+      renderChecklist();
+    }
+
+    // Atalhos Rápidos
+    function runQuickCommand(cmd) {
+      terminalInput.value = cmd;
+      handleCommand();
+    }
+
+    // Processamento dos Comandos no Terminal
+    function handleCommand() {
+      const rawCmd = terminalInput.value.trim();
+      if (!rawCmd) return;
+
+      appendOutput(`$ ${rawCmd}`, 'prompt');
+      terminalInput.value = '';
+
+      const cmd = rawCmd.toLowerCase().replace(/\s+/g, ' ');
+
+      if (cmd === 'clear') {
+        clearTerminal();
+        return;
+      }
+
+      if (cmd === 'git status') {
+        if (!repoState.staged && !repoState.hasCommits) {
+          appendOutput('No branch main\nChanges not staged for commit:\n  (use "git add <file>..." to update what will be committed)\n\n\tmodified:   README.md', 'error');
+        } else if (repoState.staged && !repoState.hasCommits) {
+          appendOutput('No branch main\nChanges to be committed:\n  (use "git restore --staged <file>..." to unstage)\n\n\tmodified:   README.md', 'success');
+        } else {
+          appendOutput('On branch main\nNothing to commit, working tree clean.', 'success');
+        }
+      } 
+      else if (cmd === 'git add .' || cmd === 'git add readme.md') {
+        repoState.staged = true;
+        stepsData[3].completed = true;
+        appendOutput('Modificações adicionadas à área de preparação (Staging Area) com sucesso!', 'success');
+        showToast('git add executado! Agora você pode fazer o commit.');
+        selectStep(4); // Avança guia para commit
+      } 
+      else if (cmd.startsWith('git commit')) {
+        // VERIFICAÇÃO DE ERRO SOLICITADA!
+        if (!repoState.staged) {
+          appendOutput('Erro: Nenhuma alteração adicionada ao commit. Execute "git add ." primeiro.', 'error');
+          appendActionOutput('Clique para corrigir:', 'git add .', () => runQuickCommand('git add .'));
+          showToast('Erro: Nenhuma alteração em Staging!', true);
+          return;
+        }
+
+        repoState.staged = false;
+        repoState.hasCommits = true;
+        stepsData[4].completed = true;
+
+        const hash = Math.random().toString(36).substring(2, 8);
+        appendOutput(`[main ${hash}] Commit realizado com sucesso!\n 1 file changed, 12 insertions(+)`, 'success');
+        showToast('Commit realizado! Agora você pode dar git push.');
+        selectStep(5); // Avança guia para push
+      } 
+      else if (cmd === 'git push' || cmd.startsWith('git push')) {
+        if (!repoState.hasCommits) {
+          appendOutput('Tudo atualizado (Everything up-to-date). Faça um commit primeiro.', 'info');
+          return;
+        }
+
+        repoState.pushed = true;
+        stepsData[5].completed = true;
+        appendOutput('Enviando dados para o GitHub (origin/main)...\nSucesso! Repositório remoto atualizado com sucesso. 🚀', 'success');
+        showToast('git push concluído! Alterações no GitHub.');
+      } 
+      else if (cmd === 'git init') {
+        stepsData[0].completed = true;
+        appendOutput('Repositório Git inicializado com sucesso na pasta atual.', 'success');
+      } 
+      else if (cmd.startsWith('git clone')) {
+        stepsData[1].completed = true;
+        appendOutput('Clonando repositório remoto...\nSucesso! Repositório clonado.', 'success');
+      }
+      else if (cmd.startsWith('echo')) {
+        stepsData[2].completed = true;
+        appendOutput('Arquivo README.md criado com sucesso.', 'success');
+      }
+      else if (cmd === 'git pull') {
+        appendOutput('Buscando atualizações...\nJá atualizado. (Already up to date.)', 'info');
+      } 
+      else if (cmd === 'git log') {
+        if (!repoState.hasCommits) {
+          appendOutput('Ainda não existem commits no histórico.', 'info');
+        } else {
+          appendOutput('commit a8f3b12 (HEAD -> main)\nAuthor: Desenvolvedor <dev@estudos.com>\n\n    docs: atualização de estudos', 'warning');
+        }
+      } 
+      else {
+        appendOutput(`Comando não reconhecido: "${rawCmd}". Tente "git add .", "git commit -m 'msg'" ou "git push".`, 'error');
+      }
+
+      renderChecklist();
+    }
+
+    function appendOutput(text, type = 'gray') {
+      const line = document.createElement('div');
+      line.className = 'font-mono whitespace-pre-wrap leading-relaxed';
+
+      if (type === 'prompt') line.className += ' text-git-orange font-bold mt-1';
+      else if (type === 'error') line.className += ' text-red-400 font-medium';
+      else if (type === 'success') line.className += ' text-emerald-400 font-medium';
+      else if (type === 'warning') line.className += ' text-yellow-300';
+      else if (type === 'info') line.className += ' text-blue-400';
+      else line.className += ' text-gray-400';
+
+      line.textContent = text;
+      terminalBody.appendChild(line);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    function appendActionOutput(label, cmdText, actionFn) {
+      const wrap = document.createElement('div');
+      wrap.className = 'my-1.5 flex items-center gap-2';
+
+      const btn = document.createElement('button');
+      btn.className = 'bg-git-green hover:bg-emerald-600 text-white font-mono text-xs px-2.5 py-1 rounded transition flex items-center gap-1.5 shadow';
+      btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Executar ${cmdText} agora`;
+      btn.onclick = actionFn;
+
+      wrap.appendChild(btn);
+      terminalBody.appendChild(wrap);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    function clearTerminal() {
+      terminalBody.innerHTML = `
+        <div class="text-xs text-gray-500 border-b border-git-border/40 pb-2 mb-3">
+          Terminal limpo.<br>
+          Digite <span class="text-green-400">git add .</span> ou clique nos itens do checklist.
+        </div>
+      `;
+    }
+
+    function resetAll() {
+      repoState.staged = false;
+      repoState.hasCommits = false;
+      repoState.pushed = false;
+      stepsData.forEach(s => s.completed = false);
+      clearTerminal();
+      selectStep(0);
+      showToast('Simulador resetado com sucesso!');
+    }
+
+    // Gerador de README
+    function renderBadgesSelector() {
+      techBadgesContainer.innerHTML = '';
+      availableTechs.forEach(tech => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `text-xs px-3 py-1.5 rounded-md border font-medium transition flex items-center gap-1.5 ${
+          tech.selected ? 'bg-git-blue/20 border-git-blue text-blue-300' : 'bg-git-dark border-git-border text-gray-400'
+        }`;
+        btn.innerHTML = `<span>${tech.name}</span> ${tech.selected ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}`;
+        btn.onclick = () => {
+          tech.selected = !tech.selected;
+          renderBadgesSelector();
+          updateReadmePreview();
+        };
+        techBadgesContainer.appendChild(btn);
+      });
+    }
+
+    function generateMarkdown() {
+      const title = readmeTitle.value.trim() || 'Meu Projeto';
+      const desc = readmeDesc.value.trim();
+      const author = readmeAuthor.value.trim();
+      const user = readmeGithubUser.value.trim();
+
+      const badges = availableTechs.filter(t => t.selected).map(t => `![${t.name}](${t.badge})`).join(' ');
+
+      return `# 📁 ${title}\n\n${badges ? badges + '\n\n' : ''}${desc ? desc + '\n\n' : ''}---\n\n## 👤 Autor\n\nDesenvolvido por **[${author}](https://github.com/${user})**.\n\n---\n\n## 🚀 Comandos Git Utilizados\n\n- \`git add .\`: Prepara arquivos alterados.\n- \`git commit -m "msg"\`: Salva histórico.\n- \`git push\`: Envia para o GitHub.`;
+    }
+
+    function updateReadmePreview() {
+      readmePreview.innerHTML = marked.parse(generateMarkdown());
+    }
+
+    function copyReadme() {
+      const text = generateMarkdown();
+      const area = document.createElement('textarea');
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      document.body.removeChild(area);
+
+      const btnText = document.getElementById('copyBtnText');
+      btnText.textContent = 'Copiado!';
+      setTimeout(() => btnText.textContent = 'Copiar Texto Markdown', 2000);
+      showToast('Markdown copiado para a área de transferência!');
+    }
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.textContent = msg;
+      if (isError) {
+        toast.className = toast.className.replace('border-git-green', 'border-red-500');
+        toastIcon.className = 'fa-solid fa-circle-exclamation text-red-500 text-lg';
+      } else {
+        toast.className = toast.className.replace('border-red-500', 'border-git-green');
+        toastIcon.className = 'fa-solid fa-circle-check text-git-green text-lg';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    }
+  </script>
+</body>
+</html>

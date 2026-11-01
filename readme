@@ -1,0 +1,98 @@
+# 🚀 Git & GitHub Interactive Hub
+
+[![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
+[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
+[![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
+[![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/pt-BR/docs/Web/HTML)
+[![Tailwind CSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+O **Git & GitHub Interactive Hub** é uma plataforma Web interativa projetada para auxiliar estudantes e desenvolvedores iniciantes a compreenderem na prática o fluxo de trabalho (*workflow*) do Git e do GitHub. 
+
+A aplicação conta com um simulador de terminal *Bash* integrado, sistema de auto-ajuda/validação de erros, um *checklist* de estudos progressivo e um gerador dinâmico com visualização em tempo real de ficheiros `README.md`.
+
+---
+
+## 📸 Funcionalidades Principais
+
+* **🖥️ Terminal Bash Simulado:**
+  * Suporte aos principais comandos Git (`git status`, `git add .`, `git commit`, `git push`, `git pull`, `git init`, `git clone`, `git log`).
+  * Tratamento de erros inteligente (ex: alerta o utilizador ao tentar executar `git commit` sem antes rodar o `git add .`, disponibilizando um botão de correção instantânea).
+  * Botões de atalhos rápidos para comandos frequentes.
+
+* **📋 Progresso do Estudo (Checklist Guiado):**
+  * Lista de etapas guiadas desde a criação do repositório até ao envio (`push`) das alterações.
+  * Barra de progresso dinâmica com percentual de conclusão.
+  * Card descritivo que detalha o objetivo do comando selecionado e permite transferi-lo diretamente para o terminal com um clique.
+
+* **📝 Gerador & Live Preview de README.md:**
+  * Formulário interativo para personalização do ficheiro `README.md` (título, descrição, autor, utilizador do GitHub).
+  * Seleção visual de *badges* de tecnologias (`Git`, `GitHub`, `JavaScript`, `HTML5`, `CSS3`, `React`).
+  * Renderização em tempo real do resultado final formatado usando [Marked.js](https://marked.js.org/).
+  * Botão de cópia rápida do código Markdown gerado para a área de transferência.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+O projeto foi construído utilizando tecnologias Web standard, sem necessidade de *bundlers* ou instalações complexas:
+
+* **HTML5:** Estrutura semântica da aplicação.
+* **Tailwind CSS (CDN):** Estilização moderna e layout responsivo com suporte a *Dark Mode*.
+* **JavaScript (Vanilla / ES6):** Manipulação da DOM, gestão de estado da simulação e interatividade.
+* **FontAwesome (v6.4.0):** Biblioteca de ícones da interface.
+* **Marked.js:** Biblioteca para parsing e renderização de Markdown em tempo real.
+* **Google Fonts:** Tipografias *Inter* (sans-serif) e *Fira Code* (monospace).
+
+---
+
+## 📂 Estrutura do Ficheiro
+
+A aplicação foi desenvolvida em formato **Single-File** para facilitar a distribuição e o acesso local imediato:
+
+```text
+git-github-interactive-hub/
+│
+├── index.html       # Aplicação completa (HTML, Tailwind CSS, JavaScript e lógica do terminal)
+└── README.md        # Documentação detalhada do projeto
+```
+
+---
+
+## 💡 Como Usar a Aplicação
+
+### 1. Praticar Comandos no Terminal
+1. Introduza o comando manualmente no campo de entrada `$ Digite um comando Git...` e pressione **Enter** (ou clique em **Executar**).
+2. Utilize a barra de **Atalhos Rápidos** para executar comandos comuns com apenas um clique.
+
+### 2. Seguir o Guia de Aprendizado
+1. Clique em qualquer item do painel **Progresso do Estudo**.
+2. Observe a explicação detalhada no card **Comando Selecionado**.
+3. Clique em **"Usar no Terminal"** para preencher o terminal automaticamente com o comando correto.
+
+### 3. Criar a sua Documentação (README)
+1. Preencha os campos da secção **Gerador & Visualizador de README.md**.
+2. Escolha as *badges* de tecnologias pretendidas.
+3. Visualize o resultado na caixa **Modelo de README.md (Live Preview)**.
+4. Clique em **Copiar Texto Markdown** e cole no seu projeto.
+
+---
+
+## 🚀 Como Executar Localmente
+
+Não é necessário instalar o Node.js, dependências do npm ou servidores locais:
+
+1. Transfira ou clone este repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/git-github-interactive-hub.git
+   ```
+2. Navegue até à pasta do projeto:
+   ```bash
+   cd git-github-interactive-hub
+   ```
+3. Abra o ficheiro `index.html` em qualquer navegador moderno (Google Chrome, Mozilla Firefox, Microsoft Edge, Brave, Safari).
+
+---
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins educacionais e demonstrativos. Sinta-se livre para utilizar, modificar e partilhar!
